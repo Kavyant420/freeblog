@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Blog Platform</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #f4f4f4;
+            --text-color: #333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            background-color: #2980b9;
+            padding: 1rem;
+        }
+
+        .navigation button {
+            margin: 0 10px;
+            padding: 10px 20px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .navigation button:hover {
+            background-color: #27ae60;
+        }
+
+        #blogForm, #postsList {
+            background-color: white;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        #blogForm input, #blogForm textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        #blogForm button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #blogForm button:hover {
+            background-color: #2980b9;
+        }
+
+        .blog-post {
+            background-color: white;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .blog-post h2 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .blog-post .meta {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .ad-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .navigation {
+                flex-direction: column;
+            }
+            .navigation button {
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Free Blog Platform</h1>
+        </div>
+    </header>
+
+    <nav class="navigation">
+        <button onclick="showCreatePost()">Create New Post</button>
+        <button onclick="showAllPosts()">View All Posts</button>
+    </nav>
+
+    <div class="container">
+        <!-- AdSense Banner Ad -->
+        <div class="ad-container">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-YOUR_ADSENSE_CLIENT_ID"
+                 data-ad-slot="YOUR_AD_SLOT"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+
+        <div id="blogForm" style="display:none;">
+            <h2>Create a New Blog Post</h2>
+            <input type="text" id="postTitle" placeholder="Enter Post Title" required>
+            <textarea id="postContent" placeholder="Write your blog post here..." rows="10" required></textarea>
+            <button onclick="savePost()">Publish Post</button>
+        </div>
+
+        <div id="postsList">
+            <h2>Recent Blog Posts</h2>
+            <div id="posts"></div>
+        </div>
+
+        <!-- AdSense In-Content Ad -->
+        <div class="ad-container">
+            <ins class="adsbygoogle"
+                 style="display:block; text-align:center;"
+                 data-ad-layout="in-article"
+                 data-ad-format="fluid"
+                 data-ad-client="ca-pub-YOUR_ADSENSE_CLIENT_ID"
+                 data-ad-slot="YOUR_IN_CONTENT_AD_SLOT"></ins>
+            <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+    </div>
+
+    <script>
+        // Blog Post Management
+        class BlogManager {
+            constructor() {
+                // Use in-memory storage as a fallback
+                this.posts = [];
+            }
+
+            addPost(title, content) {
+                const post = {
+                    id: Date.now(),
+                    title: title,
+                    content: content,
+                    date: new Date().toLocaleString()
+                };
+                this.posts.unshift(post);
+                return post;
+            }
+
+            getAllPosts() {
+                return this.posts;
+            }
+
+            renderPosts() {
+                const postsContainer = document.getElementById('posts');
+                postsContainer.innerHTML = '';
+
+                if (this.posts.length === 0) {
+                    postsContainer.innerHTML = '<p>No posts yet. Create your first blog post!</p>';
+                    return;
+                }
+
+                this.posts.forEach(post => {
+                    const postElement = document.createElement('div');
+                    postElement.classList.add('blog-post');
+                    postElement.innerHTML = `
+                        <h2>${this.sanitizeHTML(post.title)}</h2>
+                        <div class="meta">Published on: ${post.date}</div>
+                        <p>${this.sanitizeHTML(post.content)}</p>
+                    `;
+                    postsContainer.appendChild(postElement);
+                });
+            }
+
+            // Simple HTML sanitization to prevent XSS
+            sanitizeHTML(str) {
+                const temp = document.createElement('div');
+                temp.textContent = str;
+                return temp.innerHTML;
+            }
+        }
+
+        // Initialize Blog Manager
+        const blogManager = new BlogManager();
+
+        // Page Load Initialization
+        function initializePage() {
+            blogManager.renderPosts();
+        }
+
+        // Show Create Post Form
+        function showCreatePost() {
+            document.getElementById('blogForm').style.display = 'block';
+            document.getElementById('postTitle').value = '';
+            document.getElementById('postContent').value = '';
+        }
+
+        // Show All Posts
+        function showAllPosts() {
+            document.getElementById('blogForm').style.display = 'none';
+            blogManager.renderPosts();
+        }
+
+        // Save Post
+        function savePost() {
+            const titleInput = document.getElementById('postTitle');
+            const contentInput = document.getElementById('postContent');
+
+            if (!titleInput.value.trim() || !contentInput.value.trim()) {
+                alert('Please enter both a title and content for your post.');
+                return;
+            }
+
+            blogManager.addPost(titleInput.value, contentInput.value);
+            blogManager.renderPosts();
+            
+            // Hide form after posting
+            document.getElementById('blogForm').style.display = 'none';
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initializePage);
+    </script>
+</body>
+  </html>
